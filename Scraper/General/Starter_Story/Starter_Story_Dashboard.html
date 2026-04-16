@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Starter Story — Analytics Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0a;--card:#111;--card2:#161616;--border:#222;--accent:#fff;--muted:#666;--dim:#444;--text:#ccc;--green:#2a5;--red:#c44;--blue:#48f;--yellow:#da3;--purple:#a6f}
+body{background:var(--bg);color:var(--text);font-family:'Courier New',monospace;padding:0;line-height:1.5}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:1400px;margin:0 auto;padding:20px}
+.header{background:#111;border-bottom:1px solid var(--border);padding:28px 32px;margin-bottom:24px}
+.header h1{color:var(--accent);font-size:22px;letter-spacing:2px;text-transform:uppercase}
+.header .sub{color:var(--muted);font-size:12px;margin-top:6px}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+.kpi{background:var(--card);border:1px solid var(--border);padding:18px 16px;text-align:center}
+.kpi .val{font-size:28px;font-weight:bold;color:var(--accent);letter-spacing:1px}
+.kpi .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-top:4px}
+.kpi .delta{font-size:10px;margin-top:2px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);padding:20px;margin-bottom:16px}
+.card h2{font-size:11px;text-transform:uppercase;letter-spacing:3px;color:var(--muted);margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:8px}
+.card h3{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin:12px 0 6px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1px;padding:8px 10px;border-bottom:1px solid var(--border);font-weight:bold}
+td{padding:7px 10px;border-bottom:1px solid #1a1a1a;color:var(--text)}
+tr:hover td{background:#1a1a1a}
+.bar-cell{position:relative}
+.bar-fill{position:absolute;left:0;top:0;bottom:0;background:var(--accent);opacity:0.07;border-radius:2px}
+.tag{display:inline-block;background:#1a1a1a;border:1px solid var(--border);padding:3px 10px;margin:3px;font-size:11px;color:var(--text);border-radius:2px}
+.tag .cnt{color:var(--muted);font-size:10px;margin-left:4px}
+.score-bar{display:inline-block;height:8px;border-radius:1px;margin-right:6px;vertical-align:middle}
+.entity-grid{display:flex;flex-wrap:wrap;gap:6px}
+.entity{background:var(--card2);border:1px solid var(--border);padding:6px 12px;font-size:11px}
+.entity .etype{color:var(--muted);font-size:9px;text-transform:uppercase}
+.fact-item{padding:8px 0;border-bottom:1px solid #1a1a1a;font-size:12px}
+.fact-item .ftype{font-size:9px;text-transform:uppercase;color:var(--yellow);margin-right:6px}
+.fact-item .fsrc{color:var(--dim);font-size:10px;margin-top:2px}
+.vid-row{padding:8px 0;border-bottom:1px solid #1a1a1a}
+.vid-row .vtitle{font-size:12px;color:var(--accent)}
+.vid-row .vmeta{font-size:10px;color:var(--muted);margin-top:2px}
+.score-badge{display:inline-block;padding:2px 8px;font-size:11px;font-weight:bold;border-radius:2px;margin-right:6px}
+.s-high{background:#1a3a1a;color:#4c8;border:1px solid #2a5a2a}
+.s-mid{background:#3a3a1a;color:#cc8;border:1px solid #5a5a2a}
+.s-low{background:#3a1a1a;color:#c66;border:1px solid #5a2a2a}
+.heatmap{display:grid;grid-template-columns:repeat(11,1fr);gap:3px;margin:8px 0}
+.hm-cell{text-align:center;padding:8px 2px;font-size:11px;border-radius:2px}
+.footer{text-align:center;color:var(--dim);font-size:10px;padding:24px;border-top:1px solid var(--border);margin-top:24px}
+</style></head><body>
+<div class="header">
+<h1>Scraper &mdash; Starter Story</h1>
+<div class="sub">2026-04-14 00:18 &nbsp;|&nbsp; Copyright (c) 2024-2025 TL. All rights reserved.</div>
+</div>
+<div class="wrap">
+
+<div class="kpi-row">
+<div class="kpi"><div class="val">406</div><div class="lbl">Videos</div></div>
+<div class="kpi"><div class="val">3</div><div class="lbl">Channels</div></div>
+<div class="kpi"><div class="val">11</div><div class="lbl">Categories</div></div>
+<div class="kpi"><div class="val">8.2</div><div class="lbl">Avg Score /10</div></div>
+<div class="kpi"><div class="val">4909</div><div class="lbl">Chunks</div></div>
+<div class="kpi"><div class="val">2078</div><div class="lbl">Facts</div></div>
+<div class="kpi"><div class="val">744</div><div class="lbl">Entities</div></div>
+<div class="kpi"><div class="val">30</div><div class="lbl">Unique Tags</div></div>
+</div>
+<div class="kpi-row">
+<div class="kpi"><div class="val" style="color:var(--green)">9.0</div><div class="lbl">Best Score</div></div>
+<div class="kpi"><div class="val" style="color:var(--yellow)">8.0</div><div class="lbl">Median Score</div></div>
+<div class="kpi"><div class="val" style="color:var(--red)">1.0</div><div class="lbl">Lowest Score</div></div>
+<div class="kpi"><div class="val">554</div><div class="lbl">Companies</div></div>
+<div class="kpi"><div class="val">2148</div><div class="lbl">Topics</div></div>
+<div class="kpi"><div class="val">387</div><div class="lbl">Score 8+</div></div>
+<div class="kpi"><div class="val">1</div><div class="lbl">Score &lt;5</div></div>
+<div class="kpi"><div class="val">406</div><div class="lbl">Scored Videos</div></div>
+</div>
+<div class="grid2">
+<div class="card"><h2>Category Distribution</h2><table>
+<tr><th>Category</th><th>Videos</th><th>Share</th><th>Avg Score</th><th>Distribution</th></tr>
+<tr><td><b>Technology</b></td><td>129</td><td>31.8%</td><td style="color:var(--green)">8.2</td>
+<td class="bar-cell"><div class="bar-fill" style="width:100.0%"></div>&nbsp;</td></tr>
+<tr><td><b>Education</b></td><td>105</td><td>25.9%</td><td style="color:var(--green)">7.9</td>
+<td class="bar-cell"><div class="bar-fill" style="width:81.3953488372093%"></div>&nbsp;</td></tr>
+<tr><td><b>Business</b></td><td>78</td><td>19.2%</td><td style="color:var(--green)">8.2</td>
+<td class="bar-cell"><div class="bar-fill" style="width:60.46511627906976%"></div>&nbsp;</td></tr>
+<tr><td><b>SaaS</b></td><td>62</td><td>15.3%</td><td style="color:var(--green)">8.7</td>
+<td class="bar-cell"><div class="bar-fill" style="width:48.06201550387597%"></div>&nbsp;</td></tr>
+<tr><td><b>AI</b></td><td>19</td><td>4.7%</td><td style="color:var(--green)">8.3</td>
+<td class="bar-cell"><div class="bar-fill" style="width:14.728682170542637%"></div>&nbsp;</td></tr>
+<tr><td><b>Finance</b></td><td>8</td><td>2.0%</td><td style="color:var(--green)">8.1</td>
+<td class="bar-cell"><div class="bar-fill" style="width:6.2015503875969%"></div>&nbsp;</td></tr>
+<tr><td><b>Career|Technology|Education</b></td><td>1</td><td>0.2%</td><td style="color:var(--green)">8.0</td>
+<td class="bar-cell"><div class="bar-fill" style="width:0.7751937984496124%"></div>&nbsp;</td></tr>
+<tr><td><b>Career|Education</b></td><td>1</td><td>0.2%</td><td style="color:var(--green)">8.0</td>
+<td class="bar-cell"><div class="bar-fill" style="width:0.7751937984496124%"></div>&nbsp;</td></tr>
+<tr><td><b>Career|Business|Education</b></td><td>1</td><td>0.2%</td><td style="color:var(--green)">8.0</td>
+<td class="bar-cell"><div class="bar-fill" style="width:0.7751937984496124%"></div>&nbsp;</td></tr>
+<tr><td><b>Career|AI|Technology</b></td><td>1</td><td>0.2%</td><td style="color:var(--green)">8.0</td>
+<td class="bar-cell"><div class="bar-fill" style="width:0.7751937984496124%"></div>&nbsp;</td></tr>
+<tr><td><b>AI|Business|Marketing</b></td><td>1</td><td>0.2%</td><td style="color:var(--green)">8.0</td>
+<td class="bar-cell"><div class="bar-fill" style="width:0.7751937984496124%"></div>&nbsp;</td></tr>
+</table></div>
+<div class="card"><h2>Difficulty Breakdown</h2><table>
+<tr><th>Level</th><th>Count</th><th>Share</th><th></th></tr>
+<tr><td style="color:var(--yellow)"><b>Intermediate</b></td><td>207</td><td>51.0%</td>
+<td><div style="background:var(--yellow);width:100.0%;height:10px;border-radius:2px;opacity:0.6"></div></td></tr>
+<tr><td style="color:var(--green)"><b>Beginner</b></td><td>125</td><td>30.8%</td>
+<td><div style="background:var(--green);width:60.38647342995169%;height:10px;border-radius:2px;opacity:0.6"></div></td></tr>
+<tr><td style="color:var(--red)"><b>Advanced</b></td><td>74</td><td>18.2%</td>
+<td><div style="background:var(--red);width:35.748792270531396%;height:10px;border-radius:2px;opacity:0.6"></div></td></tr>
+</table>
+<h3>Difficulty × Category</h3><table><tr><th>Category</th><th>Beginner</th><th>Intermediate</th><th>Advanced</th></tr>
+<tr><td>AI</td><td>6</td><td>11</td><td>2</td></tr>
+<tr><td>AI|Business|Marketing</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>Business</td><td>18</td><td>50</td><td>10</td></tr>
+<tr><td>Career|AI|Technology</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>Career|Business|Education</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>Career|Education</td><td>1</td><td>0</td><td>0</td></tr>
+<tr><td>Career|Technology|Education</td><td>1</td><td>0</td><td>0</td></tr>
+<tr><td>Education</td><td>73</td><td>32</td><td>0</td></tr>
+<tr><td>Finance</td><td>4</td><td>2</td><td>2</td></tr>
+<tr><td>SaaS</td><td>3</td><td>47</td><td>12</td></tr>
+<tr><td>Technology</td><td>19</td><td>62</td><td>48</td></tr>
+</table>
+</div></div>
+<div class="grid2">
+<div class="card"><h2>Top Technologies</h2><table>
+<tr><th>#</th><th>Technology</th><th>Mentions</th><th></th></tr>
+<tr><td style="color:var(--muted)">1</td><td><b>Python</b></td><td>35x</td>
+<td><div style="background:var(--blue);width:100.0%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">2</td><td><b>ChatGPT</b></td><td>33x</td>
+<td><div style="background:var(--blue);width:94.28571428571428%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">3</td><td><b>SQL</b></td><td>27x</td>
+<td><div style="background:var(--blue);width:77.14285714285715%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">4</td><td><b>AI</b></td><td>21x</td>
+<td><div style="background:var(--blue);width:60.0%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">5</td><td><b>Machine Learning</b></td><td>19x</td>
+<td><div style="background:var(--blue);width:54.285714285714285%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">6</td><td><b>YouTube</b></td><td>17x</td>
+<td><div style="background:var(--blue);width:48.57142857142857%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">7</td><td><b>JavaScript</b></td><td>15x</td>
+<td><div style="background:var(--blue);width:42.857142857142854%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">8</td><td><b>SaaS</b></td><td>14x</td>
+<td><div style="background:var(--blue);width:40.0%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">9</td><td><b>Large Language Models</b></td><td>12x</td>
+<td><div style="background:var(--blue);width:34.285714285714285%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">10</td><td><b>Neural Networks</b></td><td>10x</td>
+<td><div style="background:var(--blue);width:28.57142857142857%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+</table></div>
+<div class="card"><h2>Score Distribution</h2>
+<div class="heatmap">
+<div class="hm-cell" style="background:#1a1a1a;color:#666">0<br><small>0</small></div>
+<div class="hm-cell" style="background:rgb(40,40,40);color:#666">1<br><small>1</small></div>
+<div class="hm-cell" style="background:#1a1a1a;color:#666">2<br><small>0</small></div>
+<div class="hm-cell" style="background:#1a1a1a;color:#666">3<br><small>0</small></div>
+<div class="hm-cell" style="background:#1a1a1a;color:#666">4<br><small>0</small></div>
+<div class="hm-cell" style="background:rgb(40,40,40);color:#666">5<br><small>1</small></div>
+<div class="hm-cell" style="background:#1a1a1a;color:#666">6<br><small>0</small></div>
+<div class="hm-cell" style="background:rgb(52,44,40);color:#666">7<br><small>17</small></div>
+<div class="hm-cell" style="background:rgb(240,120,40);color:#fff">8<br><small>277</small></div>
+<div class="hm-cell" style="background:rgb(119,71,40);color:#fff">9<br><small>110</small></div>
+<div class="hm-cell" style="background:#1a1a1a;color:#666">10<br><small>0</small></div>
+</div>
+<h3>Score Analysis</h3><table>
+<tr><td>Score ≥ 8 (Excellent)</td><td style="color:var(--green)"><b>387</b> (95.3%)</td></tr>
+<tr><td>Score ≥ 7 (Good+)</td><td style="color:var(--green)">404 (99.5%)</td></tr>
+<tr><td>Score &lt; 5 (Low)</td><td style="color:var(--red)">1 (0.2%)</td></tr>
+<tr><td>Standard Dev</td><td>0.64</td></tr>
+</table>
+</div></div>
+<div class="card"><h2>Channel Comparison</h2><table>
+<tr><th>Channel</th><th>Videos</th><th>Avg Score</th><th>Categories</th><th>Performance</th></tr>
+<tr><td><b>Starter Story</b></td><td>136</td><td style="color:var(--green)">8.5/10</td><td style="color:var(--muted)">SaaS,Business,Technology,AI,Finance,AI|Business|Ma</td>
+<td><div style="background:var(--green);width:85.22058823529412%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td><b>Anastasi In Tech</b></td><td>99</td><td style="color:var(--green)">8.3/10</td><td style="color:var(--muted)">Technology,AI,Business</td>
+<td><div style="background:var(--green);width:82.52525252525253%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td><b>Tina Huang</b></td><td>171</td><td style="color:var(--green)">7.9/10</td><td style="color:var(--muted)">Education,Finance,Technology,AI,Business,Career|Bu</td>
+<td><div style="background:var(--green);width:79.23976608187134%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+</table></div>
+<div class="grid2">
+<div class="card"><h2>Top 10 Videos (Highest Score)</h2>
+<div class="vid-row"><span class="score-badge s-high">9.0</span><a href="https://www.youtube.com/watch?v=SpSq39DDHyE" class="vtitle">The End Of Computing As We Know It</a><div class="vmeta">Anastasi In Tech &bull; Technology</div></div>
+<div class="vid-row"><span class="score-badge s-high">9.0</span><a href="https://www.youtube.com/watch?v=b_PS8o8pi9A" class="vtitle">Why Light Will Change Computers Forever</a><div class="vmeta">Anastasi In Tech &bull; Technology</div></div>
+<div class="vid-row"><span class="score-badge s-high">9.0</span><a href="https://www.youtube.com/watch?v=DXgZ3X8z7eE" class="vtitle">World‘s First 0.2nm Technology</a><div class="vmeta">Anastasi In Tech &bull; Technology</div></div>
+<div class="vid-row"><span class="score-badge s-high">9.0</span><a href="https://www.youtube.com/watch?v=2Exyzeg5xGQ" class="vtitle">Microchip Breakthrough No One Expected</a><div class="vmeta">Anastasi In Tech &bull; Technology</div></div>
+<div class="vid-row"><span class="score-badge s-high">9.0</span><a href="https://www.youtube.com/watch?v=KghkI5Oh_lY" class="vtitle">The RAM War — And the Winners No One Expected</a><div class="vmeta">Anastasi In Tech &bull; Technology</div></div>
+<div class="vid-row"><span class="score-badge s-high">9.0</span><a href="https://www.youtube.com/watch?v=RxuSvyOwVCI" class="vtitle">New Colossus: World's Largest AI Data Center Isn’t What It Seems</a><div class="vmeta">Anastasi In Tech &bull; Technology</div></div>
+<div class="vid-row"><span class="score-badge s-high">9.0</span><a href="https://www.youtube.com/watch?v=w6RztFN36Vo" class="vtitle">This Forgotten Idea Is Taking Over Computing</a><div class="vmeta">Anastasi In Tech &bull; Technology</div></div>
+<div class="vid-row"><span class="score-badge s-high">9.0</span><a href="https://www.youtube.com/watch?v=E1theCfcFsA" class="vtitle">I Met Protoclone. It’s Actually Insane</a><div class="vmeta">Anastasi In Tech &bull; Technology</div></div>
+<div class="vid-row"><span class="score-badge s-high">9.0</span><a href="https://www.youtube.com/watch?v=kucIgsS6wrw" class="vtitle">AI Has Never Been Able To Do It - Until Now</a><div class="vmeta">Anastasi In Tech &bull; Technology</div></div>
+<div class="vid-row"><span class="score-badge s-high">9.0</span><a href="https://www.youtube.com/watch?v=NuJGgmhKqyQ" class="vtitle">World's Largest AI Data Center - $100B Disaster</a><div class="vmeta">Anastasi In Tech &bull; Technology</div></div>
+</div>
+<div class="card"><h2>Bottom 5 Videos (Lowest Score)</h2>
+<div class="vid-row"><span class="score-badge s-low">1.0</span><a href="https://www.youtube.com/watch?v=5fMWUC2MFrA" class="vtitle">The Next Big Wave in Chip Design. TSMC's WoW Packaging</a><div class="vmeta">Anastasi In Tech &bull; Technology</div></div>
+<div class="vid-row"><span class="score-badge s-mid">5.0</span><a href="https://www.youtube.com/watch?v=lCi6fWuI8r4" class="vtitle">A day in the life of a data scientist (FAANG data scientist remote)</a><div class="vmeta">Tina Huang &bull; Technology</div></div>
+<div class="vid-row"><span class="score-badge s-high">7.0</span><a href="https://www.youtube.com/watch?v=G2VnANxuzoI" class="vtitle">New 2nm IBM's transistors explained</a><div class="vmeta">Anastasi In Tech &bull; Technology</div></div>
+<div class="vid-row"><span class="score-badge s-high">7.0</span><a href="https://www.youtube.com/watch?v=4EskLn9xpiU" class="vtitle">Q&amp;A: About me, Work in Chip Design, Investing, Sexism, Tesla and more</a><div class="vmeta">Anastasi In Tech &bull; Technology</div></div>
+<div class="vid-row"><span class="score-badge s-high">7.0</span><a href="https://www.youtube.com/watch?v=a-xiUiKIxBA" class="vtitle">Study With Me Using GPT-4o</a><div class="vmeta">Tina Huang &bull; Education</div></div>
+</div></div>
+<div class="grid2">
+<div class="card"><h2>Most Mentioned Companies</h2><table>
+<tr><th>#</th><th>Company</th><th>Mentions</th><th></th></tr>
+<tr><td style="color:var(--muted)">1</td><td><b>Google</b></td><td>65x</td>
+<td><div style="background:var(--purple);width:100.0%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">2</td><td><b>Starter Story</b></td><td>55x</td>
+<td><div style="background:var(--purple);width:84.61538461538461%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">3</td><td><b>OpenAI</b></td><td>51x</td>
+<td><div style="background:var(--purple);width:78.46153846153847%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">4</td><td><b>TSMC</b></td><td>34x</td>
+<td><div style="background:var(--purple);width:52.307692307692314%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">5</td><td><b>NVIDIA</b></td><td>34x</td>
+<td><div style="background:var(--purple);width:52.307692307692314%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">6</td><td><b>Meta</b></td><td>33x</td>
+<td><div style="background:var(--purple);width:50.76923076923077%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">7</td><td><b>Intel</b></td><td>31x</td>
+<td><div style="background:var(--purple);width:47.69230769230769%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">8</td><td><b>Apple</b></td><td>24x</td>
+<td><div style="background:var(--purple);width:36.92307692307693%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">9</td><td><b>IBM</b></td><td>22x</td>
+<td><div style="background:var(--purple);width:33.84615384615385%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">10</td><td><b>Microsoft</b></td><td>22x</td>
+<td><div style="background:var(--purple);width:33.84615384615385%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">11</td><td><b>Amazon</b></td><td>22x</td>
+<td><div style="background:var(--purple);width:33.84615384615385%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">12</td><td><b>Anthropic</b></td><td>20x</td>
+<td><div style="background:var(--purple);width:30.76923076923077%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">13</td><td><b>AMD</b></td><td>18x</td>
+<td><div style="background:var(--purple);width:27.692307692307693%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">14</td><td><b>HubSpot</b></td><td>17x</td>
+<td><div style="background:var(--purple);width:26.153846153846157%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+<tr><td style="color:var(--muted)">15</td><td><b>Samsung</b></td><td>16x</td>
+<td><div style="background:var(--purple);width:24.615384615384617%;height:10px;border-radius:2px;opacity:0.5"></div></td></tr>
+</table></div>
+<div class="card"><h2>Entity Types</h2><table>
+<tr><th>Type</th><th>Unique Entities</th><th></th></tr>
+<tr><td><b>company</b></td><td>213</td>
+<td><div style="background:var(--yellow);width:100.0%;height:10px;border-radius:2px;opacity:0.4"></div></td></tr>
+<tr><td><b>tool</b></td><td>198</td>
+<td><div style="background:var(--yellow);width:92.95774647887323%;height:10px;border-radius:2px;opacity:0.4"></div></td></tr>
+<tr><td><b>framework</b></td><td>174</td>
+<td><div style="background:var(--yellow);width:81.69014084507043%;height:10px;border-radius:2px;opacity:0.4"></div></td></tr>
+<tr><td><b>person</b></td><td>170</td>
+<td><div style="background:var(--yellow);width:79.81220657276995%;height:10px;border-radius:2px;opacity:0.4"></div></td></tr>
+<tr><td><b>platform</b></td><td>6</td>
+<td><div style="background:var(--yellow);width:2.8169014084507045%;height:10px;border-radius:2px;opacity:0.4"></div></td></tr>
+<tr><td><b>organization</b></td><td>5</td>
+<td><div style="background:var(--yellow);width:2.3474178403755865%;height:10px;border-radius:2px;opacity:0.4"></div></td></tr>
+<tr><td><b>location</b></td><td>5</td>
+<td><div style="background:var(--yellow);width:2.3474178403755865%;height:10px;border-radius:2px;opacity:0.4"></div></td></tr>
+<tr><td><b>technology</b></td><td>3</td>
+<td><div style="background:var(--yellow);width:1.4084507042253522%;height:10px;border-radius:2px;opacity:0.4"></div></td></tr>
+<tr><td><b>book</b></td><td>2</td>
+<td><div style="background:var(--yellow);width:0.9389671361502347%;height:10px;border-radius:2px;opacity:0.4"></div></td></tr>
+<tr><td><b>other</b></td><td>1</td>
+<td><div style="background:var(--yellow);width:0.4694835680751174%;height:10px;border-radius:2px;opacity:0.4"></div></td></tr>
+<tr><td><b>media</b></td><td>1</td>
+<td><div style="background:var(--yellow);width:0.4694835680751174%;height:10px;border-radius:2px;opacity:0.4"></div></td></tr>
+</table>
+<h3>Fact Types</h3><table><tr><th>Type</th><th>Count</th></tr>
+<tr><td>claim</td><td>1289</td></tr>
+<tr><td>statistic</td><td>780</td></tr>
+<tr><td>fact</td><td>4</td></tr>
+<tr><td>milestone</td><td>2</td></tr>
+<tr><td>framework</td><td>2</td></tr>
+<tr><td>recommendation</td><td>1</td></tr>
+</table></div></div>
+<div class="card"><h2>Top 25 Entities</h2><div class="entity-grid">
+<div class="entity"><b>Tina Huang</b> <span class="etype">person</span> <span style="color:var(--muted)">(142)</span></div>
+<div class="entity"><b>Starter Story</b> <span class="etype">company</span> <span style="color:var(--muted)">(53)</span></div>
+<div class="entity"><b>Pat Walls</b> <span class="etype">person</span> <span style="color:var(--muted)">(40)</span></div>
+<div class="entity"><b>ChatGPT</b> <span class="etype">tool</span> <span style="color:var(--muted)">(23)</span></div>
+<div class="entity"><b>Google</b> <span class="etype">company</span> <span style="color:var(--muted)">(19)</span></div>
+<div class="entity"><b>Meta</b> <span class="etype">company</span> <span style="color:var(--muted)">(15)</span></div>
+<div class="entity"><b>HubSpot</b> <span class="etype">company</span> <span style="color:var(--muted)">(12)</span></div>
+<div class="entity"><b>Brilliant</b> <span class="etype">company</span> <span style="color:var(--muted)">(11)</span></div>
+<div class="entity"><b>OpenAI</b> <span class="etype">company</span> <span style="color:var(--muted)">(11)</span></div>
+<div class="entity"><b>University of Pennsylvania</b> <span class="etype">company</span> <span style="color:var(--muted)">(10)</span></div>
+<div class="entity"><b>Amazon</b> <span class="etype">company</span> <span style="color:var(--muted)">(9)</span></div>
+<div class="entity"><b>Goldman Sachs</b> <span class="etype">company</span> <span style="color:var(--muted)">(9)</span></div>
+<div class="entity"><b>IBM</b> <span class="etype">company</span> <span style="color:var(--muted)">(9)</span></div>
+<div class="entity"><b>Intel</b> <span class="etype">company</span> <span style="color:var(--muted)">(9)</span></div>
+<div class="entity"><b>NVIDIA</b> <span class="etype">company</span> <span style="color:var(--muted)">(9)</span></div>
+<div class="entity"><b>Claude</b> <span class="etype">tool</span> <span style="color:var(--muted)">(8)</span></div>
+<div class="entity"><b>Lonely Octopus</b> <span class="etype">tool</span> <span style="color:var(--muted)">(8)</span></div>
+<div class="entity"><b>Python</b> <span class="etype">tool</span> <span style="color:var(--muted)">(8)</span></div>
+<div class="entity"><b>Anthropic</b> <span class="etype">company</span> <span style="color:var(--muted)">(7)</span></div>
+<div class="entity"><b>Boops Keyboard</b> <span class="etype">tool</span> <span style="color:var(--muted)">(7)</span></div>
+<div class="entity"><b>DeepMind</b> <span class="etype">company</span> <span style="color:var(--muted)">(7)</span></div>
+<div class="entity"><b>Anastasi In Tech</b> <span class="etype">person</span> <span style="color:var(--muted)">(6)</span></div>
+<div class="entity"><b>Apple</b> <span class="etype">company</span> <span style="color:var(--muted)">(6)</span></div>
+<div class="entity"><b>Gemini</b> <span class="etype">tool</span> <span style="color:var(--muted)">(6)</span></div>
+<div class="entity"><b>Glassdoor</b> <span class="etype">tool</span> <span style="color:var(--muted)">(6)</span></div>
+</div></div>
+<div class="grid2">
+<div class="card"><h2>Semantic Topics</h2><div>
+<span class="tag" style="font-size:19px">SaaS business models<span class="cnt">11</span></span>
+<span class="tag" style="font-size:18px">Career Development<span class="cnt">10</span></span>
+<span class="tag" style="font-size:16px">habit formation<span class="cnt">8</span></span>
+<span class="tag" style="font-size:15px">Subscription business models<span class="cnt">6</span></span>
+<span class="tag" style="font-size:15px">AI product development<span class="cnt">6</span></span>
+<span class="tag" style="font-size:14px">SaaS product development<span class="cnt">5</span></span>
+<span class="tag" style="font-size:14px">behavioral psychology<span class="cnt">5</span></span>
+<span class="tag" style="font-size:14px">founder journey<span class="cnt">5</span></span>
+<span class="tag" style="font-size:14px">product-market fit<span class="cnt">5</span></span>
+<span class="tag" style="font-size:13px">semiconductor manufacturing<span class="cnt">4</span></span>
+<span class="tag" style="font-size:13px">artificial intelligence applications<span class="cnt">4</span></span>
+<span class="tag" style="font-size:13px">personal development<span class="cnt">4</span></span>
+<span class="tag" style="font-size:13px">professional development<span class="cnt">4</span></span>
+<span class="tag" style="font-size:13px">career development<span class="cnt">4</span></span>
+<span class="tag" style="font-size:13px">entrepreneurship<span class="cnt">4</span></span>
+<span class="tag" style="font-size:13px">MVP Development<span class="cnt">4</span></span>
+<span class="tag" style="font-size:13px">SaaS business model<span class="cnt">4</span></span>
+<span class="tag" style="font-size:13px">SaaS growth strategies<span class="cnt">4</span></span>
+<span class="tag" style="font-size:13px">MVP development<span class="cnt">4</span></span>
+<span class="tag" style="font-size:13px">audience building<span class="cnt">4</span></span>
+</div></div>
+<div class="card"><h2>Auto Tags</h2><div>
+<span class="tag" style="font-size:17px">SaaS<span class="cnt">43</span></span>
+<span class="tag" style="font-size:17px">entrepreneurship<span class="cnt">43</span></span>
+<span class="tag" style="font-size:14px">productivity<span class="cnt">28</span></span>
+<span class="tag" style="font-size:13px">solopreneur<span class="cnt">23</span></span>
+<span class="tag" style="font-size:13px">bootstrapping<span class="cnt">21</span></span>
+<span class="tag" style="font-size:12px">data-science<span class="cnt">18</span></span>
+<span class="tag" style="font-size:11px">data science<span class="cnt">12</span></span>
+<span class="tag" style="font-size:11px">no-code<span class="cnt">12</span></span>
+<span class="tag" style="font-size:11px">monetization<span class="cnt">12</span></span>
+<span class="tag" style="font-size:11px">AI infrastructure<span class="cnt">11</span></span>
+<span class="tag" style="font-size:11px">prompt engineering<span class="cnt">11</span></span>
+<span class="tag" style="font-size:11px">motivation<span class="cnt">11</span></span>
+<span class="tag" style="font-size:11px">bootstrapped<span class="cnt">11</span></span>
+<span class="tag" style="font-size:11px">semiconductor manufacturing<span class="cnt">10</span></span>
+<span class="tag" style="font-size:11px">automation<span class="cnt">10</span></span>
+<span class="tag" style="font-size:11px">AI agents<span class="cnt">10</span></span>
+<span class="tag" style="font-size:11px">personal development<span class="cnt">10</span></span>
+<span class="tag" style="font-size:11px">founder-story<span class="cnt">10</span></span>
+<span class="tag" style="font-size:11px">product-market-fit<span class="cnt">10</span></span>
+<span class="tag" style="font-size:11px">app-development<span class="cnt">10</span></span>
+<span class="tag" style="font-size:11px">indie-hacking<span class="cnt">10</span></span>
+<span class="tag" style="font-size:11px">quantum computing<span class="cnt">9</span></span>
+<span class="tag" style="font-size:11px">AI tools<span class="cnt">9</span></span>
+<span class="tag" style="font-size:11px">career advice<span class="cnt">9</span></span>
+<span class="tag" style="font-size:11px">career transition<span class="cnt">9</span></span>
+<span class="tag" style="font-size:11px">organic-growth<span class="cnt">9</span></span>
+<span class="tag" style="font-size:11px">chip design<span class="cnt">8</span></span>
+<span class="tag" style="font-size:11px">TSMC<span class="cnt">8</span></span>
+<span class="tag" style="font-size:11px">semiconductor<span class="cnt">8</span></span>
+<span class="tag" style="font-size:11px">AI<span class="cnt">8</span></span>
+</div></div></div>
+<div class="card"><h2>Key Facts (High Confidence)</h2>
+<div class="fact-item"><span class="ftype">statistic</span>500 million active Pinterest users<div class="fsrc">Source: I Make $16K/Month... Even In A &quot;Tiny&quot; Niche</div></div>
+<div class="fact-item"><span class="ftype">statistic</span>Nearly 25% of jobs are set to be disrupted in the next five years<div class="fsrc">Source: How to Choose A Career You Won’t Regret</div></div>
+<div class="fact-item"><span class="ftype">statistic</span>60-70% of traffic from Google organic search<div class="fsrc">Source: How I Grew My App to $13K/month (Even Though I Hate Marketing)</div></div>
+<div class="fact-item"><span class="ftype">statistic</span>480 new customers in most recent tracked month<div class="fsrc">Source: I built a $14K/month SaaS using Discord</div></div>
+<div class="fact-item"><span class="ftype">claim</span>Operating costs under $500 monthly<div class="fsrc">Source: My website makes $35K/month (built in 3 hours)</div></div>
+<div class="fact-item"><span class="ftype">statistic</span>$1M+ ARR achieved in 10 months<div class="fsrc">Source: I Built a $1M SaaS 100% with No Code (Bubble)</div></div>
+<div class="fact-item"><span class="ftype">claim</span>Copper signal degrades to few meters at tens of gigabits per second<div class="fsrc">Source: This Will Power Everything</div></div>
+<div class="fact-item"><span class="ftype">claim</span>Phase change memory can store up to four equivalent bits in a single memory cell<div class="fsrc">Source: IBM's New Computer Chip is Pushing the LIMITS! 🔥</div></div>
+<div class="fact-item"><span class="ftype">statistic</span>Currently generates $15,000 per month<div class="fsrc">Source: I shipped my app in 12 hours and now it makes $15K/month</div></div>
+<div class="fact-item"><span class="ftype">claim</span>Machine learning enables computers to learn patterns and make decisions by studying data<div class="fsrc">Source: How To Self Study AI FAST</div></div>
+<div class="fact-item"><span class="ftype">claim</span>A18 and A18 Pro chips are 30% faster than previous generation<div class="fsrc">Source: The Secret Behind Apple's New Silicon</div></div>
+<div class="fact-item"><span class="ftype">claim</span>Technology roles dominate fastest-growing jobs by percentage terms<div class="fsrc">Source: Best Upcoming Jobs (2026 - 2030)</div></div>
+<div class="fact-item"><span class="ftype">claim</span>Tesla integrated 25 compute chips into one training tile using 3D chiplet packaging<div class="fsrc">Source: Hot Tesla DOJO Update !</div></div>
+<div class="fact-item"><span class="ftype">claim</span>Program includes hands-on projects and real-world applications<div class="fsrc">Source: Overview, Review and Study Tips - Google Data Analytics Professional Certificate (condensed version)</div></div>
+<div class="fact-item"><span class="ftype">claim</span>PostBridge was built to solve the 30-minute daily task of cross-platform social posting<div class="fsrc">Source: I Built a $10K/Month App from My Mom’s Basement</div></div>
+</div>
+<div class="card"><h2>All Videos</h2><table>
+<tr><th>#</th><th>Title</th><th>Channel</th><th>Category</th><th>Score</th><th>Difficulty</th></tr>
+<tr><td style="color:var(--dim)">1</td><td><a href="https://www.youtube.com/watch?v=BNr1JOQdSN0">How I Made $65K in 3 Days</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">2</td><td><a href="https://www.youtube.com/watch?v=ZGwQoRw7mh8">My Side Project Makes $15K/Month (Quit My 9-5)</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">3</td><td><a href="https://www.youtube.com/watch?v=KpVPST_P4W8">I Make $60K/Month with 4 Apps</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">4</td><td><a href="https://www.youtube.com/watch?v=9r0qPeSJGog">I built a $14K/month SaaS using Discord</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">5</td><td><a href="https://www.youtube.com/watch?v=88BbTpbWVpY">I rebuilt a $1B app and now make $14K/month</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">6</td><td><a href="https://www.youtube.com/watch?v=loXc0Tyi4R4">How I Built It: $40K/Month iPhone App</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">7</td><td><a href="https://www.youtube.com/watch?v=1nfPvJKrYYQ">Our simple app made $100K in 90 days</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">8</td><td><a href="https://www.youtube.com/watch?v=xZDofUHbZHA">The day I hit reset on my life</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">9</td><td><a href="https://www.youtube.com/watch?v=4BsxnGRbF4k">I Found a Business for Sale and Rebuilt It Into $20K/Month</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">10</td><td><a href="https://www.youtube.com/watch?v=OKl0C3zg0LU">I Made $2.5M Selling A Digital Product</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">11</td><td><a href="https://www.youtube.com/watch?v=hYF4fQYlrso">I Make $16K/Month... Even In A &quot;Tiny&quot; Niche</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">12</td><td><a href="https://www.youtube.com/watch?v=7pCgbhUWW54">I Turned One Website Into $1M/Year</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">13</td><td><a href="https://www.youtube.com/watch?v=wqN-gjnpns8">He's Launching A New $1M Business Every Month</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">14</td><td><a href="https://www.youtube.com/watch?v=RPM4ImzcIFc">How I Built It: $17K/Month Open Source SaaS</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">15</td><td><a href="https://www.youtube.com/watch?v=PSx0vcUY-sk">I Got Rejected From YC, Then Built a $200M Startup</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">16</td><td><a href="https://www.youtube.com/watch?v=nzVcbrLl9VU">The Multipreneur: He’s Building A $10M Portfolio of Income Streams</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">17</td><td><a href="https://www.youtube.com/watch?v=7KqlwjBM_tM">How I Built It: $30K/month Micro-SaaS (Subscribr Breakdown)</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">18</td><td><a href="https://www.youtube.com/watch?v=SJOFUBNHYqU">I make $120K/year from 3 mobile apps</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">19</td><td><a href="https://www.youtube.com/watch?v=_KaFS4Dxs5k">How I Built a $10K/Month SaaS (Beginner Strategy)</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">20</td><td><a href="https://www.youtube.com/watch?v=zTKYJWAEl78">I Make $5M/Year With 3 Businesses</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">21</td><td><a href="https://www.youtube.com/watch?v=h9R6ZeNruuI">The Underdog: From $200K in Debt to $1M App Maker</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">22</td><td><a href="https://www.youtube.com/watch?v=x9TUDb4sLE0">I Built a $1M SaaS 100% with No Code (Bubble)</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">23</td><td><a href="https://www.youtube.com/watch?v=BeRKQkU5Ceo">The Underdog: From Life Changing Accident to $100M/Year</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">24</td><td><a href="https://www.youtube.com/watch?v=dXKzST0FE-A">I Make $1.3M/Year With One Skill</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">25</td><td><a href="https://www.youtube.com/watch?v=L_FY6aW9cJ4">How to Use AI to Find a $1M Idea [Reddit, Claude]</a></td>
+<td>Starter Story</td><td>AI|Business|Marketing</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">26</td><td><a href="https://www.youtube.com/watch?v=T_wEmB5MapE">How I Built A $1M Business From This Starbucks</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">27</td><td><a href="https://www.youtube.com/watch?v=3X4VneEHvig">How I Used Reddit To Build a $25K/Month Business</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">28</td><td><a href="https://www.youtube.com/watch?v=E_rX4JJrYkY">Zero to $40K/Month With One Marketing Channel (No Social Media)</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">29</td><td><a href="https://www.youtube.com/watch?v=2dfMUtHlQik">How I Built It: $400K/Month Mobile App (Gravl)</a></td>
+<td>Starter Story</td><td>AI</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">30</td><td><a href="https://www.youtube.com/watch?v=OoFqTMPW_3E">He Quit His Job And Makes $10M/Year Writing Online</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">31</td><td><a href="https://www.youtube.com/watch?v=trNGj1BN1GU">I Make $1M/Year As An Introvert</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">32</td><td><a href="https://www.youtube.com/watch?v=MLAH5OZ5FO8">How I Built a $4M Business (Simple Strategy)</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">33</td><td><a href="https://www.youtube.com/watch?v=xeUhKuJbeWQ">I Built 4 SaaS Apps to $100K MRR: Here's My Exact Playbook</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">34</td><td><a href="https://www.youtube.com/watch?v=DV7bBCAABg4">I built a $100K/month AI app</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">35</td><td><a href="https://www.youtube.com/watch?v=laRliIVNZgU">I Quit YouTube &amp; Built a $1M App (Without My Audience)</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">36</td><td><a href="https://www.youtube.com/watch?v=orYTlk_BhW8">I vibe coded a $12K/month mobile app (Stoppr Breakdown)</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">37</td><td><a href="https://www.youtube.com/watch?v=PmyXmpkTIdc">I flipped 4 apps and made $500,000</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">38</td><td><a href="https://www.youtube.com/watch?v=YtyJ4reSQY0">Teen From Kazakhstan Makes $1M/Year Online</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">39</td><td><a href="https://www.youtube.com/watch?v=LRX8TWC2hTM">I Make $60K/Month From the Most Boring SaaS on the Internet</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">40</td><td><a href="https://www.youtube.com/watch?v=rPguT9z6kRQ">How I Finally Built a $10K/Month SaaS (30 Failures)</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">41</td><td><a href="https://www.youtube.com/watch?v=hKqLceTPLWM">The $1M Mobile App Playbook</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">42</td><td><a href="https://www.youtube.com/watch?v=WGVxAmmJUmY">The Underdog: From $10/hr to $1.5M/Year</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">43</td><td><a href="https://www.youtube.com/watch?v=l4WEqPX52Cg">How This $250K/Month SaaS Got Its First 100 Users (Steal This Playbook)</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">44</td><td><a href="https://www.youtube.com/watch?v=GFnBp8lMIf4">9 Things That Make Me $1.8M/Year</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">45</td><td><a href="https://www.youtube.com/watch?v=e6COsh5wfNA">They Built A $2M Business To Fund Their Dreams</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">46</td><td><a href="https://www.youtube.com/watch?v=VfNRd5Rk0cM">This app made over $1M</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">47</td><td><a href="https://www.youtube.com/watch?v=u8sW-NhGfXw">I Built A $1M App In 5 Hours</a></td>
+<td>Starter Story</td><td>Finance</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">48</td><td><a href="https://www.youtube.com/watch?v=IuoscQiQQLg">The Underdog: He Turned His Last $4,000 Into $48M</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">49</td><td><a href="https://www.youtube.com/watch?v=miEUhwSR2-0">My AI App Makes $100K/Month</a></td>
+<td>Starter Story</td><td>AI</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">50</td><td><a href="https://www.youtube.com/watch?v=67zh8_yiPh4">I Built 3 SaaS Apps to $200K MRR: Here's My Exact Playbook</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">51</td><td><a href="https://www.youtube.com/watch?v=4KfFB-dh71Y">I Make $17K/Month With One Strategy</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">52</td><td><a href="https://www.youtube.com/watch?v=a1EXyJlSx9g">My app makes $41K/month</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">53</td><td><a href="https://www.youtube.com/watch?v=7LZ0MTkNr34">I Make $1M/Year With One Website</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">54</td><td><a href="https://www.youtube.com/watch?v=Gv2fzC96Z40">The Underdog: From His Parent’s Basement to $25M</a></td>
+<td>Starter Story</td><td>AI</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">55</td><td><a href="https://www.youtube.com/watch?v=Fk2J2U7669o">How To Build A $100M Podcast Empire</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">56</td><td><a href="https://www.youtube.com/watch?v=NvtsM8Nk72c">How I Built It: $23K/month micro-saas</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">57</td><td><a href="https://www.youtube.com/watch?v=dphK9rh2F5U">I Make $1M/Month From Bed</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">58</td><td><a href="https://www.youtube.com/watch?v=VZ1XspToV1E">I Built a $1M SaaS Using YouTube</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">59</td><td><a href="https://www.youtube.com/watch?v=G5cbMnFXcj0">I Make $2.4M/Year With 6 YouTube Channels</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">60</td><td><a href="https://www.youtube.com/watch?v=8yCXyCN_NR0">I Turned $150 into $2M/Year</a></td>
+<td>Starter Story</td><td>AI</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">61</td><td><a href="https://www.youtube.com/watch?v=WctFUP4w0sc">I Built A $1M SaaS In 87 Days</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">62</td><td><a href="https://www.youtube.com/watch?v=akM6P97_0B8">The Multipreneur: He Makes $10M/Year With 6 Businesses</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">63</td><td><a href="https://www.youtube.com/watch?v=uBGbvKScavk">I Made $30M With My Side Project</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">64</td><td><a href="https://www.youtube.com/watch?v=E_sPvPHwpuk">How I Built A $1M Business in 117 Days</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">65</td><td><a href="https://www.youtube.com/watch?v=T5zMsTw8GWQ">How I built a $30K/month mobile app</a></td>
+<td>Starter Story</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">66</td><td><a href="https://www.youtube.com/watch?v=ptT0tfzeu8I">I Hacked Reddit To Build A $1M Business</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">67</td><td><a href="https://www.youtube.com/watch?v=KcCnqLBhvXY">The $10M AI SaaS Playbook</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">68</td><td><a href="https://www.youtube.com/watch?v=w8oUlfgvcTI">My two apps made $30M</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">69</td><td><a href="https://www.youtube.com/watch?v=CnE_fLDqa7M">He Turned $500 Into $10M</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">70</td><td><a href="https://www.youtube.com/watch?v=ty9ZcimL6VE">How I Built It: $20K/Month Chrome Extension</a></td>
+<td>Starter Story</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">71</td><td><a href="https://www.youtube.com/watch?v=yue9in5oh64">How I Built It: $20K/Month AI App as a Non-Technical Founder</a></td>
+<td>Starter Story</td><td>AI</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">72</td><td><a href="https://www.youtube.com/watch?v=hCvy-Rt7Naw">How To Make $30K/month With Cooking</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">73</td><td><a href="https://www.youtube.com/watch?v=plrni3IBEyI">I made $1M flipping apps</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">74</td><td><a href="https://www.youtube.com/watch?v=ZEIPj7QbZeI">The Underdog: He Turned His Last $1,000 Into $150M</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">75</td><td><a href="https://www.youtube.com/watch?v=G4nsGvL4Fo0">I Make $15K/Month With 2 AI Apps</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">76</td><td><a href="https://www.youtube.com/watch?v=p3xa6mpxvOY">I Became A Venture Capitalist With Only $1,000</a></td>
+<td>Starter Story</td><td>Finance</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">77</td><td><a href="https://www.youtube.com/watch?v=9pP4qSrt5GU">I Made $2.3M Writing Like a 5th Grader</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">78</td><td><a href="https://www.youtube.com/watch?v=Km0FNcBI9CM">Zero to $1.1B from Flipping Websites</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">79</td><td><a href="https://www.youtube.com/watch?v=irEi7DVBHdA">Meet The Kid Who Made $1M with ChatGPT</a></td>
+<td>Starter Story</td><td>AI</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">80</td><td><a href="https://www.youtube.com/watch?v=3eY71OS4MFw">How We Built a $10K/mo SaaS</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">81</td><td><a href="https://www.youtube.com/watch?v=hYW9YDwHE20">My app failed, then I changed one thing, and made $80K</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">82</td><td><a href="https://www.youtube.com/watch?v=w3zxMrwWrt0">This app replaced my 9-5 ($150K/year)</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">83</td><td><a href="https://www.youtube.com/watch?v=v6IF-lVuvbs">The Solopreneur: He Makes $1.7M With 0 Employees</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">84</td><td><a href="https://www.youtube.com/watch?v=DZTApvWzMuY">He Makes $125,000/year As A Niche YouTuber</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">85</td><td><a href="https://www.youtube.com/watch?v=IZsQqarWXtY">I Built a $1M AI App [No Code]</a></td>
+<td>Starter Story</td><td>AI</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">86</td><td><a href="https://www.youtube.com/watch?v=i6kCkGmJc9M">He Built A $2.5M/Year Business In 2 Years</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">87</td><td><a href="https://www.youtube.com/watch?v=5C3YCTL-36c">I Make $11M/Year Selling One Product</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">88</td><td><a href="https://www.youtube.com/watch?v=BskeAo66er0">He Built A $600,000 One Person Business (with video editing)</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">89</td><td><a href="https://www.youtube.com/watch?v=5MaPEK-yVVY">I Make $845,601 Writing This Online...</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">90</td><td><a href="https://www.youtube.com/watch?v=WuzxmeUP6ro">How I Built It: $37K/Month Notion App</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">91</td><td><a href="https://www.youtube.com/watch?v=mjCa8IFjM2E">How I Built It: $10K/Month AI Image Generator</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">92</td><td><a href="https://www.youtube.com/watch?v=VYT-ip21P08">How I Used Twitter to Hit $10K/Month</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">93</td><td><a href="https://www.youtube.com/watch?v=ST2ROUFbdvU">How We Grew Our App to $30K/Month</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">94</td><td><a href="https://www.youtube.com/watch?v=lWwZ-fsD8gM">I Quit My $250K Job To Become an Author</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">95</td><td><a href="https://www.youtube.com/watch?v=vedkm3ZmHIE">The $1.8M Solopreneur Playbook</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">96</td><td><a href="https://www.youtube.com/watch?v=TCGXT7ySco8">How I Built It: $12K/Month Micro SaaS</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">97</td><td><a href="https://www.youtube.com/watch?v=CwHD6Fg-Mjs">I vibe coded a $20K/month mobile app in 14 days</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">98</td><td><a href="https://www.youtube.com/watch?v=LWPN-PAhtLA">My website makes $35K/month (built in 3 hours)</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">99</td><td><a href="https://www.youtube.com/watch?v=6iqo7lNR_m0">I Built This $5M/Year Business From A Van</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">100</td><td><a href="https://www.youtube.com/watch?v=qIlX7cQ2UdU">I Make $15K/Month From One Website</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">101</td><td><a href="https://www.youtube.com/watch?v=pvjalHFNM9Q">How I Used Reddit to Build a $34K/Month SaaS</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">102</td><td><a href="https://www.youtube.com/watch?v=npcL7oRZQlI">How I Built It: $9K/Month Micro-SaaS</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">103</td><td><a href="https://www.youtube.com/watch?v=W48emwbUlUE">How I Built a $12K/Month Micro-SaaS</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">104</td><td><a href="https://www.youtube.com/watch?v=vw2Yc4Y1PsU">I make $10K/month from 28 apps</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">105</td><td><a href="https://www.youtube.com/watch?v=nsn94Ad47GY">Our Mobile App Made $85K in 8 months</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">106</td><td><a href="https://www.youtube.com/watch?v=9sJ2R0rM3CA">I Make $150K/Month From 20 Tiny Apps</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">107</td><td><a href="https://www.youtube.com/watch?v=FCGpgPZqmkY">How I built my first SaaS without an audience ($25K/month)</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">108</td><td><a href="https://www.youtube.com/watch?v=-OPKa8DIzKU">My Apps Failed Until I Discovered This Playbook ($35K/month apps)</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">109</td><td><a href="https://www.youtube.com/watch?v=R4BS_UiTBPw">How I Built a $13K/Month SaaS</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">110</td><td><a href="https://www.youtube.com/watch?v=47QXbPGyzBI">I Made $500K From 8 Different Income Streams</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">111</td><td><a href="https://www.youtube.com/watch?v=0T55DRYqeeA">From Zero to $42K/Month in 90 Days with AI</a></td>
+<td>Starter Story</td><td>AI</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">112</td><td><a href="https://www.youtube.com/watch?v=LYdJ3dfNCVs">My mobile app made $800K in 365 days</a></td>
+<td>Starter Story</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">113</td><td><a href="https://www.youtube.com/watch?v=wvYej-2KWDg">How he makes $250K per month from a simple app (Letterly Breakdown)</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">114</td><td><a href="https://www.youtube.com/watch?v=Adl5_lJfkEE">How I Grew My App to $13K/month (Even Though I Hate Marketing)</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">115</td><td><a href="https://www.youtube.com/watch?v=8BtHk-oNlN0">I cloned 3 apps and now make $35K/month</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">116</td><td><a href="https://www.youtube.com/watch?v=5u9u8yzPEpA">He Made $10M with 3 iPhone Apps</a></td>
+<td>Starter Story</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">117</td><td><a href="https://www.youtube.com/watch?v=qeY283nBhIA">I Built a $10K/Month App from My Mom’s Basement</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">118</td><td><a href="https://www.youtube.com/watch?v=XifgHi9R5Rc">How My App Hit $60K/Month in 2 Months</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">119</td><td><a href="https://www.youtube.com/watch?v=k2jecxFu2as">I shipped my app in 12 hours and now it makes $15K/month</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">120</td><td><a href="https://www.youtube.com/watch?v=7vz6b_Ohdl0">I Built a Niche App to $9K MRR</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">121</td><td><a href="https://www.youtube.com/watch?v=9WWvLj-NqEE">My 2 apps made $1.5M</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">122</td><td><a href="https://www.youtube.com/watch?v=yBjcmMhXSDk">I Built a $20K/Month Mobile App: Here’s My Entire Playbook</a></td>
+<td>Starter Story</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">123</td><td><a href="https://www.youtube.com/watch?v=8kM-JcKpcDs">How I grew my mobile app to $17K per month</a></td>
+<td>Starter Story</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">124</td><td><a href="https://www.youtube.com/watch?v=jpSY4MlWX50">I Built an App with Cursor, Made $30K, and Quit My Job.</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">125</td><td><a href="https://www.youtube.com/watch?v=v-uhjlMg9L0">I sold my company</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">126</td><td><a href="https://www.youtube.com/watch?v=EF3uyvHHBfM">I make $40K/month with this one website</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">127</td><td><a href="https://www.youtube.com/watch?v=BaWUPamqWlA">How I Used Reddit to Hit $17K MRR (With ZERO Audience)</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">128</td><td><a href="https://www.youtube.com/watch?v=En34iY-rQc0">I Make $250K/Month From 20 Apps</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">129</td><td><a href="https://www.youtube.com/watch?v=rCV-TVCnF6Q">How We Built It: $30K/month Mobile App</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">130</td><td><a href="https://www.youtube.com/watch?v=8xgnm6SynH4">I Spent 24 Hours With Roblox Millionaires</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">131</td><td><a href="https://www.youtube.com/watch?v=vLLBzUZr6-s">My Apps Make $4.5M/Year With $0 Marketing</a></td>
+<td>Starter Story</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">132</td><td><a href="https://www.youtube.com/watch?v=4hMg_CZauJs">I Built an App with Cursor and Made $100K on Launch Day</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">133</td><td><a href="https://www.youtube.com/watch?v=CoqAxV6b6j4">I Make $100K/Year From 2 AI Side Projects</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">134</td><td><a href="https://www.youtube.com/watch?v=tMkpiFIW8Xg">My Coding Game Makes $1M Per Month</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">135</td><td><a href="https://www.youtube.com/watch?v=zPijWd9uk-I">I Locked Myself In A Room, Made 17 Apps, &amp; Sold 2 for $265,000</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">136</td><td><a href="https://www.youtube.com/watch?v=HBCwzfFbopE">This App Makes $25,000/Month</a></td>
+<td>Starter Story</td><td>SaaS</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">137</td><td><a href="https://www.youtube.com/watch?v=ElUtkHy3-zk">Why You Can't Find A Job</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">138</td><td><a href="https://www.youtube.com/watch?v=mueI-I7Suxw">3rd Year Statistics,  Data Science, Computer Science Resume | Reviewing Your Res</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">139</td><td><a href="https://www.youtube.com/watch?v=_Udb5NC6vTI">Building AI Agents In 44 Minutes</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">140</td><td><a href="https://www.youtube.com/watch?v=BADhEALNVUA">Data Science SQL Interview Question Walkthrough | SQL Sundays #5</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">141</td><td><a href="https://www.youtube.com/watch?v=JUkSeqe1eYQ">How to choose between software engineering and data science | 5 Key Consideratio</a></td>
+<td>Tina Huang</td><td>Career|Technology|Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">142</td><td><a href="https://www.youtube.com/watch?v=0Kr1eh1wwb8">Google's 8 Hour AI Essentials Course In 15 Minutes</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">143</td><td><a href="https://www.youtube.com/watch?v=vx-x-yXXE9I">The data science resume that got me my FAANG (MANGA?) job (entry level data scie</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">144</td><td><a href="https://www.youtube.com/watch?v=8BlRT7Ktw1c">Big Tech AI Is A Lie</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">145</td><td><a href="https://www.youtube.com/watch?v=DsKZpgoy830">Every AI Model Explained</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">146</td><td><a href="https://www.youtube.com/watch?v=wQJUI8dSWNQ">3rd Year CS Resume (and asian drink) Review | Reviewing Your Resumes Ep. 2</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">147</td><td><a href="https://www.youtube.com/watch?v=WDhgOCoPT-g">SQL Data Science Interview Questions and Answers (interview style walk-through) </a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">148</td><td><a href="https://www.youtube.com/watch?v=vKsaO5IetS0">How to learn programming faster!</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">149</td><td><a href="https://www.youtube.com/watch?v=dLxz6zDGzUQ">Building 5 AI Apps In 30 Minutes (ChatGPT + Lovable Tutorial)</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">150</td><td><a href="https://www.youtube.com/watch?v=64OHAH0NbP8">what it’s ACTUALLY like to work at FAANG... (Facebook/Meta, Amazon, Netflix, Goo</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">151</td><td><a href="https://www.youtube.com/watch?v=aBkt_gIUP_c">Why you should not work at  FAANG/MANGA (Meta/Facebook, Amazon, Apple, Netflix, </a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">152</td><td><a href="https://www.youtube.com/watch?v=C9o0oiAJFLA">the most underrated data job in 2021</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">153</td><td><a href="https://www.youtube.com/watch?v=q6_9mdCkQhE">How I take notes - Tips for efficient note taking that speeds up learning</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">154</td><td><a href="https://www.youtube.com/watch?v=invk7t5YgcU">How I design effective study plans for ANY SUBJECT (and stick with them) | tradi</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">155</td><td><a href="https://www.youtube.com/watch?v=jd9lEAqkp9Y">How to Take Notes for Technical Things</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">156</td><td><a href="https://www.youtube.com/watch?v=8tpha6FIa_k">I left Meta...and I'm lowkey freaking out 🥲</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">157</td><td><a href="https://www.youtube.com/watch?v=SIsjD2bxuoc">The quant trader interview guide</a></td>
+<td>Tina Huang</td><td>Finance</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">158</td><td><a href="https://www.youtube.com/watch?v=deIUUboTeig">how to PROPERLY make a vision board | law of attraction in 2022</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">159</td><td><a href="https://www.youtube.com/watch?v=ZSXjj0HW6Kg">Data Science SQL Interview Question Walkthrough (real interview style) | SQL Sun</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">160</td><td><a href="https://www.youtube.com/watch?v=DoFZtsV25Zw">Why being a data scientist is awesome!</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">161</td><td><a href="https://www.youtube.com/watch?v=KsQU_3n0IYE">My UPenn MCIT Experience</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">162</td><td><a href="https://www.youtube.com/watch?v=Rx1i1J4m4MQ">How I got Software Engineering and Data Science Internships | Computer Science J</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">163</td><td><a href="https://www.youtube.com/watch?v=fixfN8MNvoQ">How to Get Over Fear of Failure (and stop procrastinating)</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">164</td><td><a href="https://www.youtube.com/watch?v=nH6RWQ2xoRo">How To Create A Self Study Schedule</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">165</td><td><a href="https://www.youtube.com/watch?v=ZpEfb3Tm3Qc">How To Reach Your Full Potential (alter ego effect 👯)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">166</td><td><a href="https://www.youtube.com/watch?v=I-4xBROt2Zc">How to Completely Transform Your Life in 6 Months (the butterfly effect 🦋)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">167</td><td><a href="https://www.youtube.com/watch?v=A9yKMdCT2vo">Why You (probably) Should Not Get A Master’s Degree In 2024</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">168</td><td><a href="https://www.youtube.com/watch?v=egBzpILuNhA">Why the best students are NOT the most successful</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">169</td><td><a href="https://www.youtube.com/watch?v=w8opECLgYQU">64 self-help books, summarized in 1 sentence each.</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">170</td><td><a href="https://www.youtube.com/watch?v=ZdktXRIj0Tc">5 Unique AI Projects (beginner to intermediate) | Python, LangChain, RAG, OpenAI</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">171</td><td><a href="https://www.youtube.com/watch?v=irlBYNZ2hQ8">What is Q*? | FULL DEEP DIVE</a></td>
+<td>Tina Huang</td><td>AI</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">172</td><td><a href="https://www.youtube.com/watch?v=YuI2x8I8Pgw">The Job Market Has Changed</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">173</td><td><a href="https://www.youtube.com/watch?v=vehYE1DfkZg">Every Way To Run Open Source AI Models</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">174</td><td><a href="https://www.youtube.com/watch?v=-zQ-Pf491bQ">How I Became a Data Scientist | Computer Science Job Search Part 2</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">175</td><td><a href="https://www.youtube.com/watch?v=TT-w0-obo44">How To Train Yourself To Become A Genius</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">176</td><td><a href="https://www.youtube.com/watch?v=tmXcKiVwJWg">Tech Layoffs: important lessons to recession proof yourself</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">177</td><td><a href="https://www.youtube.com/watch?v=DV0Ln7HRyJQ">Zero To Your First AI Agent In 26 Minutes (no code)</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">178</td><td><a href="https://www.youtube.com/watch?v=eAgv2-XBIac">3 More Unique and Impactful Projects to get a Data Science Job</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">179</td><td><a href="https://www.youtube.com/watch?v=kO_LUVkKdJM">The Ultimate Guide to Land a Data Science Internship | schedule and time managem</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">180</td><td><a href="https://www.youtube.com/watch?v=kKG5MDF_234">My Favourite AI Workflow Nobody Talks About</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">181</td><td><a href="https://www.youtube.com/watch?v=vaD3ZFFNwhM">How to learn SQL for data science interview (the minimize effort maximize outcom</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">182</td><td><a href="https://www.youtube.com/watch?v=2goqyY5XBeI">Are you a student? If yes, this is the best data science project for you!</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">183</td><td><a href="https://www.youtube.com/watch?v=Td-cmLfQ7uU">Real Data Science SQL Interview Questions and Answers # 1 | Data Science Intervi</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">184</td><td><a href="https://www.youtube.com/watch?v=qH7rq7p8N5s">Data Science SQL Interview Question Walkthrough (real interview style) | SQL Sun</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">185</td><td><a href="https://www.youtube.com/watch?v=rd1HKwJT6GM">Upenn MCIT Program Details and Real Student Experiences - Dr. Arvind Bhusnurmath</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">186</td><td><a href="https://www.youtube.com/watch?v=5ILM65Yi9LA">THANK YOU FOR 1000! | Proper intro | Random facts about myself</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">187</td><td><a href="https://www.youtube.com/watch?v=n9OTXvYaP5k">Real Data Science SQL Interview Questions and Answers # 2 | Data Science Intervi</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">188</td><td><a href="https://www.youtube.com/watch?v=OFJIRSsoK5A">SQL Data Science Interview Question Walkthrough | SQL Sundays #6</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">189</td><td><a href="https://www.youtube.com/watch?v=1u1GT4sdvdA">SQL Data Science Interview Questions and Answers (interview style walk-through) </a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">190</td><td><a href="https://www.youtube.com/watch?v=27zOn3IJB_M">Data Science Resume Round-Up With @KenJee_ds  - Episode 2</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">191</td><td><a href="https://www.youtube.com/watch?v=AOtHIF3N0cQ">Biology to Data Science (data professor's tips on how to get a data science rese</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">192</td><td><a href="https://www.youtube.com/watch?v=lCi6fWuI8r4">A day in the life of a data scientist (FAANG data scientist remote)</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--red)"><b>5.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">193</td><td><a href="https://www.youtube.com/watch?v=C8iL4V-y1Qs">How I chose my masters degree (as an international student)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">194</td><td><a href="https://www.youtube.com/watch?v=oshQg1uSRvg">How To Learn To Code In 2026</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">195</td><td><a href="https://www.youtube.com/watch?v=5QfjIZb9rJM">How I'm learning to trade (forex swing trading)</a></td>
+<td>Tina Huang</td><td>Finance</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">196</td><td><a href="https://www.youtube.com/watch?v=7LDKpNLsBpc">Data Science vs Software Engineering Interview | 3 Key Differences</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">197</td><td><a href="https://www.youtube.com/watch?v=ndPDXX78wcM">The software engineering resume that got me into FAANG and Goldman Sachs (intern</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">198</td><td><a href="https://www.youtube.com/watch?v=doBZSrFxLeM">How I stop myself from burning out</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">199</td><td><a href="https://www.youtube.com/watch?v=sOZ8MxFw8TQ">Why you should not be a data scientist</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">200</td><td><a href="https://www.youtube.com/watch?v=Y6q9TTOOyy0">A hard work day (ft. new NLP project) | FAANG data science isn't chill | vlog 1</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">201</td><td><a href="https://www.youtube.com/watch?v=AID4juOgYpk">Watch me build my portfolio! | How to create a portfolio website</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">202</td><td><a href="https://www.youtube.com/watch?v=Axu4tJl8gbM">How to learn data science in 2022 (the minimize effort maximize outcome way)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">203</td><td><a href="https://www.youtube.com/watch?v=zLaymr5jjMI">Do you have what it takes to be a great data scientist?</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">204</td><td><a href="https://www.youtube.com/watch?v=kHOVWiZKpHM">The comments sections are WILD | YouTube sentiment analysis - Data science proje</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">205</td><td><a href="https://www.youtube.com/watch?v=q10BfdliUdM">cake and big sister advice 🖤</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">206</td><td><a href="https://www.youtube.com/watch?v=xZi8cHzBdGE">Data Science SQL Interview Question Walkthrough | SQL Sundays #9</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">207</td><td><a href="https://www.youtube.com/watch?v=1jZ1JnbqYQw">Internship that made me rethink my career...(technology summer analyst at Goldma</a></td>
+<td>Tina Huang</td><td>Finance</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">208</td><td><a href="https://www.youtube.com/watch?v=Du6kk8IJAu4">A productive day as a data scientist | day in the life of a data scientist vlog </a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">209</td><td><a href="https://www.youtube.com/watch?v=5wMl5FM2swo">How to learn math for data science (the minimize effort maximize outcome way)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">210</td><td><a href="https://www.youtube.com/watch?v=M52Cjh3Dil4">My career changing computer science masters degree in 15 minutes (Upenn MCIT)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">211</td><td><a href="https://www.youtube.com/watch?v=GMq8Y9vdJyI">What's the best certificate for data analysts? Google vs IBM Data Analyst Certif</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">212</td><td><a href="https://www.youtube.com/watch?v=MHPGeQD8TvI">How I would learn to code (if I could start over)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">213</td><td><a href="https://www.youtube.com/watch?v=71RVNeseKZw">How to get a data science job</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">214</td><td><a href="https://www.youtube.com/watch?v=EHYv-9qSMBg">Data science interview tips (product and technical interviews)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">215</td><td><a href="https://www.youtube.com/watch?v=PL5QnLrOjqk">72 Hours Of AI Workshops In 18 Minutes</a></td>
+<td>Tina Huang</td><td>AI</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">216</td><td><a href="https://www.youtube.com/watch?v=5YaIegbrq5o">Needed to learn javascript in 3 hours - would not recommend</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">217</td><td><a href="https://www.youtube.com/watch?v=7M-f-PwfUds">from management consultant to software engineer | Humans of MCIT</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">218</td><td><a href="https://www.youtube.com/watch?v=cvTpocrPNlo">Overview, Review and Study Tips - Google Data Analytics Professional Certificate</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">219</td><td><a href="https://www.youtube.com/watch?v=dFApiK0kpUA">How To Learn Anything Faster</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">220</td><td><a href="https://www.youtube.com/watch?v=XPYT8BaTqoA">Why I work so hard (despite having a ‘good’ job)</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">221</td><td><a href="https://www.youtube.com/watch?v=yAwG8DoTmjI">How to self study using MOOCS (Udemy, Coursera, and other online courses) | self</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">222</td><td><a href="https://www.youtube.com/watch?v=_EzmbCuoFcU">How to self study technical things</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">223</td><td><a href="https://www.youtube.com/watch?v=1uCE0uoKXL8">Open Source AI In 17 Minutes</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">224</td><td><a href="https://www.youtube.com/watch?v=Dw_ko_L232M">Books that will pay off HUGE dividends in your 20s and 30s</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">225</td><td><a href="https://www.youtube.com/watch?v=_xf1TMs0ysk">5 Unique Python Projects (beginner to intermediate)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">226</td><td><a href="https://www.youtube.com/watch?v=ZI1b8YHR6M4">The habits that changed my life (and how I built them)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">227</td><td><a href="https://www.youtube.com/watch?v=uQmjcGGCPGA">How to save a half-wasted day🥲</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">228</td><td><a href="https://www.youtube.com/watch?v=YUQ18uSrwqE">Good coding habits to start developing NOW</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">229</td><td><a href="https://www.youtube.com/watch?v=INymz5VwLmk">How I consistently study with a full time job (9 months in and still going stron</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">230</td><td><a href="https://www.youtube.com/watch?v=_5jlPHUWvpQ">my simple weekly planning routine (that actually works)</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">231</td><td><a href="https://www.youtube.com/watch?v=d_RtvjDJGbY">9 ways to make money coding (and the combo strategy I recommend)</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">232</td><td><a href="https://www.youtube.com/watch?v=mtgt1ElOo0U">Why you can’t find your passion</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">233</td><td><a href="https://www.youtube.com/watch?v=8_B2XA9uaGI">How I use Notion in 4 different ways</a></td>
+<td>Tina Huang</td><td>SaaS</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">234</td><td><a href="https://www.youtube.com/watch?v=CL3GWyofdXY">What to EDUCATE YOURSELF on in 2022 (because the world is changing very quickly)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">235</td><td><a href="https://www.youtube.com/watch?v=qSlGASiJV_4">How I'm figuring out what to do with my life</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">236</td><td><a href="https://www.youtube.com/watch?v=yVj2pkeoy54">Data scientist desk setup (ergonomics while coding) | work from home edition</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">237</td><td><a href="https://www.youtube.com/watch?v=uJE_nOIetgE">What it’s like being a data scientist</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">238</td><td><a href="https://www.youtube.com/watch?v=tF2h9UaRx7w">apartment home office desk tour 🐈</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">239</td><td><a href="https://www.youtube.com/watch?v=KAVw910mIrI">The scoreboard I use to achieve my goals (science backed)</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">240</td><td><a href="https://www.youtube.com/watch?v=Zk_w_qCnQnU">the 5 books that changed my life</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">241</td><td><a href="https://www.youtube.com/watch?v=QlFV7LNPBEM">The one habit that will change your life</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">242</td><td><a href="https://www.youtube.com/watch?v=FYCXI0-S3Ug">How I motivate myself to study with a full time job (1 year in and haven’t given</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">243</td><td><a href="https://www.youtube.com/watch?v=9rGweuLdook">Tips to Learn Technical Things Faster</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">244</td><td><a href="https://www.youtube.com/watch?v=wGD_wmBZaE8">How I Found My Perfect Career (advice for indecisive people and career changers)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">245</td><td><a href="https://www.youtube.com/watch?v=nuEhBT31KQw">Every Essential AI Skill in 25 Minutes (2025)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">246</td><td><a href="https://www.youtube.com/watch?v=SrJzxalevjY">Techniques I use to be more disciplined and CONSISTENTLY study (with a full time</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">247</td><td><a href="https://www.youtube.com/watch?v=3xo1nQGqmYI">Claude 4 Models &amp; Claude Code Fundamentals In 24 Minutes</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">248</td><td><a href="https://www.youtube.com/watch?v=bnZAsuB_Ltk">How Much Do AI Freelancers Make?</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">249</td><td><a href="https://www.youtube.com/watch?v=biDmny1Zaz4">How To Stop Quitting Everything You Start</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">250</td><td><a href="https://www.youtube.com/watch?v=FJuvH-LTZmw">The BEST Upcoming Jobs</a></td>
+<td>Tina Huang</td><td>Career|AI|Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">251</td><td><a href="https://www.youtube.com/watch?v=QKqjV6L5VRY">Data scientists be like...</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">252</td><td><a href="https://www.youtube.com/watch?v=O90PZJUljOA">How I trick myself to be self-disciplined</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">253</td><td><a href="https://www.youtube.com/watch?v=UvqN3bAv0pM">Why you keep quitting online courses (and then buy more)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">254</td><td><a href="https://www.youtube.com/watch?v=UWQTIUSSVj4">How to be Successful as an Introvert</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">255</td><td><a href="https://www.youtube.com/watch?v=0zi-CG_iB6w">How To Self Study AI FAST</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">256</td><td><a href="https://www.youtube.com/watch?v=0QFh1expGNs">Career advice for your 20s and 30s</a></td>
+<td>Tina Huang</td><td>Career|Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">257</td><td><a href="https://www.youtube.com/watch?v=iLCDSY2XX7E">Vibe Coding Fundamentals In 33 minutes</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">258</td><td><a href="https://www.youtube.com/watch?v=rIJuSFsyv18">How to Become a Speed Learner (with ChatGPT)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">259</td><td><a href="https://www.youtube.com/watch?v=XZvG0hI0dpA">Making My New Self Study Plan</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">260</td><td><a href="https://www.youtube.com/watch?v=uzCTHdm0T_Q">Self Study Traps to Avoid in 2023 (stop self-sabotaging!)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">261</td><td><a href="https://www.youtube.com/watch?v=XLoMFXGTczU">Why You Will Pick the Wrong Career</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">262</td><td><a href="https://www.youtube.com/watch?v=tXlL89ZM_XA">How to Choose A Career You Won’t Regret</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">263</td><td><a href="https://www.youtube.com/watch?v=zkXonmqIBFg">101 Ways To Use AI In Your Daily Life</a></td>
+<td>Tina Huang</td><td>AI</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">264</td><td><a href="https://www.youtube.com/watch?v=VznoKyh6AXs">How to learn to code FAST using ChatGPT (it's a game changer seriously)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">265</td><td><a href="https://www.youtube.com/watch?v=NBjbueu631I">The MOST Important Skills To Learn in 2024</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">266</td><td><a href="https://www.youtube.com/watch?v=IaA-3FdWFm8">Best ChatGPT Prompts to Learn Coding (the ULTIMATE method!)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">267</td><td><a href="https://www.youtube.com/watch?v=bTYL-lFM22k">5 Unique Portfolio AI Projects (beginner to intermediate) | Python, OpenAI, Chat</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">268</td><td><a href="https://www.youtube.com/watch?v=ZsMJBw4faJM">How To Learn Things FAST</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">269</td><td><a href="https://www.youtube.com/watch?v=54ojPbRb9S4">How I Would Start My Career In 2024 (if I could redo over)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">270</td><td><a href="https://www.youtube.com/watch?v=pU85nOAVKms">How to FINALLY Self Study Consistently</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">271</td><td><a href="https://www.youtube.com/watch?v=nXRNr7hoPK8">How to Find Your Perfect Career (in the Age of AI &amp; ChatGPT)</a></td>
+<td>Tina Huang</td><td>Career|Business|Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">272</td><td><a href="https://www.youtube.com/watch?v=ouvbeb2wSGA">Financial Literacy In 63 Minutes</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">273</td><td><a href="https://www.youtube.com/watch?v=x2x8Ww7Es4s">Which Jobs Will Survive AI?</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">274</td><td><a href="https://www.youtube.com/watch?v=a-xiUiKIxBA">Study With Me Using GPT-4o</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">275</td><td><a href="https://www.youtube.com/watch?v=utPBI1qitJU">How To Start Freelancing (a step by step guide)</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>9.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">276</td><td><a href="https://www.youtube.com/watch?v=oYdGiqwLsas">How To Unlock Your Hidden Potential (pareto principle 🧠)</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">277</td><td><a href="https://www.youtube.com/watch?v=2X4EKHL5g1Y">Science Based Learning Strategies In 16 Minutes</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>9.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">278</td><td><a href="https://www.youtube.com/watch?v=qU3fmidNbJE">AI Agents Fundamentals In 21 Minutes</a></td>
+<td>Tina Huang</td><td>AI</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">279</td><td><a href="https://www.youtube.com/watch?v=dyT_3fRcTRM">Screen Resumes With Me! (hiring for our team) 🐙</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">280</td><td><a href="https://www.youtube.com/watch?v=QqLEfZXPdU4">10 Principles To Learn Anything</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">281</td><td><a href="https://www.youtube.com/watch?v=EhhUIrLvX34">Learn To Learn In 25 Minutes</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">282</td><td><a href="https://www.youtube.com/watch?v=IrZLjZjqNkk">The One Skill That Would Solve 90% Of Your Problems</a></td>
+<td>Tina Huang</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">283</td><td><a href="https://www.youtube.com/watch?v=p09yRj47kNM">Google's 9 Hour AI Prompt Engineering Course In 20 Minutes</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">284</td><td><a href="https://www.youtube.com/watch?v=xspOEnpz0uw">It’s Time To Take Your Dreams Seriously - The Alchemist by Paulo Coelho</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">285</td><td><a href="https://www.youtube.com/watch?v=qpWqrIsaKwo">Andrew Ng’s 3 Week Intro AI Course in 25 Minutes| Deep Learning AI</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">286</td><td><a href="https://www.youtube.com/watch?v=lxd65uDf2q8">My SMART Goals For 2025</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">287</td><td><a href="https://www.youtube.com/watch?v=Jkf5pTLTTFY">Budgeting In 26 Minutes</a></td>
+<td>Tina Huang</td><td>Finance</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">288</td><td><a href="https://www.youtube.com/watch?v=vMyk77NNJeU">101 AI Apps You Can Vibe Code</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">289</td><td><a href="https://www.youtube.com/watch?v=oDO_hTtQedQ">Best Upcoming Jobs (2026 - 2030)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">290</td><td><a href="https://www.youtube.com/watch?v=t1eHNDB2LOM">Claude In 29 Minutes</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">291</td><td><a href="https://www.youtube.com/watch?v=UiFBU8Aoq3I">7 hour AI Safety Course in 35 Mins</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">292</td><td><a href="https://www.youtube.com/watch?v=SDIrnL6nUkE">How To Make The ULTIMATE Self Study Plan With ChatGPT (step by step prompting gu</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">293</td><td><a href="https://www.youtube.com/watch?v=ftBWgcwvEk4">8 Hour AI Agents Course in 30 Minutes (Deep Learning AI)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">294</td><td><a href="https://www.youtube.com/watch?v=Z5EjbBPri-c">Everything Perplexity In 34 Minutes</a></td>
+<td>Tina Huang</td><td>AI</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">295</td><td><a href="https://www.youtube.com/watch?v=NDf0p5hgjvk">Everything Free You Can Do With Gemini</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">296</td><td><a href="https://www.youtube.com/watch?v=Rd6F5wHIysM">Google Firebase Studio In 23 Minutes</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">297</td><td><a href="https://www.youtube.com/watch?v=jS8g9cnfvTs">Every ChatGPT Feature In 37 Minutes</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">298</td><td><a href="https://www.youtube.com/watch?v=jm2jBW462bU">Essential AI Skills For 2026</a></td>
+<td>Tina Huang</td><td>AI</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">299</td><td><a href="https://www.youtube.com/watch?v=13EPujO40iE">Google AI Studio In 26 Minutes</a></td>
+<td>Tina Huang</td><td>AI</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">300</td><td><a href="https://www.youtube.com/watch?v=kOhLoixrJXo">MCP In 26 Minutes (Model Context Protocol)</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">301</td><td><a href="https://www.youtube.com/watch?v=TUalmf9bByA">How I Learn Things Really Fast (with AI)</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">302</td><td><a href="https://www.youtube.com/watch?v=lL7CarkGcRA">Investing In 52 Minutes</a></td>
+<td>Tina Huang</td><td>Finance</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">303</td><td><a href="https://www.youtube.com/watch?v=qbt-MFVvQQY">NotebookLM In 30 Minutes</a></td>
+<td>Tina Huang</td><td>AI</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">304</td><td><a href="https://www.youtube.com/watch?v=dvFDxwlT2e8">AI For Data Analysis In 21 Minutes</a></td>
+<td>Tina Huang</td><td>Education</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">305</td><td><a href="https://www.youtube.com/watch?v=JHF2t-S2nm0">Skills I'm Learning In 2026</a></td>
+<td>Tina Huang</td><td>Finance</td><td style="color:var(--green)"><b>8.0</b></td><td>Beginner</td></tr>
+<tr><td style="color:var(--dim)">306</td><td><a href="https://www.youtube.com/watch?v=I5y6hYfVY5o">I Built an AI App to Make Manga (From Zero Art Skills)</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">307</td><td><a href="https://www.youtube.com/watch?v=jLuwLJBQkIs">Context Engineering Clearly Explained</a></td>
+<td>Tina Huang</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">308</td><td><a href="https://www.youtube.com/watch?v=8nEv653XGag">Training AI to Design the Next Generation of Chips</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">309</td><td><a href="https://www.youtube.com/watch?v=RzI3dL1iFy0">Computer Chips for Space Travel</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">310</td><td><a href="https://www.youtube.com/watch?v=LhMOLovxL14">New Kind of Supercomputer Arrived🔥</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">311</td><td><a href="https://www.youtube.com/watch?v=NeHgMaIkPuY">New AI Learned to Design Computer Chips: The View of a Chip Designer</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">312</td><td><a href="https://www.youtube.com/watch?v=GdLRSF5wZpE">What is wrong with 5nm, 3nm, 1nm.. CPU Technology Nodes explained</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">313</td><td><a href="https://www.youtube.com/watch?v=Gzkb3Zc8pGE">Scaling Beyond 1nm</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">314</td><td><a href="https://www.youtube.com/watch?v=5fMWUC2MFrA">The Next Big Wave in Chip Design. TSMC's WoW Packaging</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--red)"><b>1.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">315</td><td><a href="https://www.youtube.com/watch?v=K8cRnwZFBqY">The Secret Sauce Behind Aleph Alpha’s AI</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">316</td><td><a href="https://www.youtube.com/watch?v=MJXlXFRQfGI">New Breakthrough in Photonic Quantum Computing Explained!</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">317</td><td><a href="https://www.youtube.com/watch?v=67LXWocO9HI">Analog AI Accelerators Explained</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">318</td><td><a href="https://www.youtube.com/watch?v=FLZ6dYQpzeg">Hot Tesla DOJO Update !</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">319</td><td><a href="https://www.youtube.com/watch?v=FuzoLdrRX5Q">This Computer Chip is alive 🤯</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">320</td><td><a href="https://www.youtube.com/watch?v=9TFIiatNmpc">Tesla FSD chip explained! Tesla vs Nvidia vs Intel chips</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">321</td><td><a href="https://www.youtube.com/watch?v=wLLty2GoAuU">The Next Big Thing in Semiconductors</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">322</td><td><a href="https://www.youtube.com/watch?v=di3-i6Z2EIc">The Truth About Microsoft’s Quantum Breakthrough</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">323</td><td><a href="https://www.youtube.com/watch?v=xbSC7ysJ1OE">DeepMind’s AI Breakthrough in Computer Science Explained</a></td>
+<td>Anastasi In Tech</td><td>AI</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">324</td><td><a href="https://www.youtube.com/watch?v=4EskLn9xpiU">Q&amp;A: About me, Work in Chip Design, Investing, Sexism, Tesla and more</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">325</td><td><a href="https://www.youtube.com/watch?v=yMOvKBaBf2s">The Future of Mind Uploading Technology</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">326</td><td><a href="https://www.youtube.com/watch?v=DhKf5_E2hrw">Who will win autonomous driving?</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">327</td><td><a href="https://www.youtube.com/watch?v=2CijJaNEh_Q">This New Chip is Defying the Laws of Physics</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">328</td><td><a href="https://www.youtube.com/watch?v=FoepjuvIZ9E">Breakthrough in Chip Manufacturing - x40 times faster 🔥</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">329</td><td><a href="https://www.youtube.com/watch?v=QurtwJdb5Ew">New Tesla DOJO supercomputer explained! (P.S. I was right !)</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">330</td><td><a href="https://www.youtube.com/watch?v=p0W5eHn5sZ0">IBM Surprised Everyone With This Chip</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">331</td><td><a href="https://www.youtube.com/watch?v=hJUHrrihzOQ">Probabilistic Computers Explained</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">332</td><td><a href="https://www.youtube.com/watch?v=1SrU_GR2HOM">The Truth About China's 7nm Breakthrough</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">333</td><td><a href="https://www.youtube.com/watch?v=-NeRIrRSFs4">The World’s First WoW Processor from Graphcore: Embracing CNNs</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">334</td><td><a href="https://www.youtube.com/watch?v=dbyCOlRN7z4">Future Computers Will Be Entirely Different</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">335</td><td><a href="https://www.youtube.com/watch?v=FSRLLVXKPWg">Why Tesla built New Radar in-house</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">336</td><td><a href="https://www.youtube.com/watch?v=yG5Pvk9Bkqk">IBM's New Computer Chip is Pushing the LIMITS! 🔥</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">337</td><td><a href="https://www.youtube.com/watch?v=IHxv8ehrx2Q">IBM’s Microchip Breakthrough: Going Vertical</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">338</td><td><a href="https://www.youtube.com/watch?v=G2VnANxuzoI">New 2nm IBM's transistors explained</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--yellow)"><b>7.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">339</td><td><a href="https://www.youtube.com/watch?v=XIEvMhRehv0">Latest AI Breakthroughs in Physics, Astrophysics and Math</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">340</td><td><a href="https://www.youtube.com/watch?v=DU6WINoehrg">DeepMind's AlphaTensor AI is a Game-changer !</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">341</td><td><a href="https://www.youtube.com/watch?v=2uZeVYjofiM">Why everyone is building AI Chips</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">342</td><td><a href="https://www.youtube.com/watch?v=irH5eKzezsE">RISC-V Chips will be everywhere</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">343</td><td><a href="https://www.youtube.com/watch?v=oREXJ4va3F4">The Secret to NVIDIA Success</a></td>
+<td>Anastasi In Tech</td><td>Business</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">344</td><td><a href="https://www.youtube.com/watch?v=oRUcvu-liFM">Tesla AI Day 2: What’s going on with DOJO</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">345</td><td><a href="https://www.youtube.com/watch?v=GY69IuTLmkk">Intel Advances in AI: Brain-Like Computing and Spiking Neural Networks Explained</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">346</td><td><a href="https://www.youtube.com/watch?v=YkcrOt40OUo">Time Crystals: A New Phase of Matter</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">347</td><td><a href="https://www.youtube.com/watch?v=RzhHdjdwRxE">IBM’s New AI Chip Explained</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">348</td><td><a href="https://www.youtube.com/watch?v=OcoZTDevwHc">New CPU Technology. IBM, Imec, Intel</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">349</td><td><a href="https://www.youtube.com/watch?v=WeYM3dn_XvM">How AI Designs Computer Chips</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">350</td><td><a href="https://www.youtube.com/watch?v=7KJibx077bE">New AI Supercomputer Outperforms NVIDIA</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">351</td><td><a href="https://www.youtube.com/watch?v=K2Ua4LkyxRY">AI Inception 🤯 New Revolutionary AI from Stanford</a></td>
+<td>Anastasi In Tech</td><td>AI</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">352</td><td><a href="https://www.youtube.com/watch?v=KB5r9xmrQBY">Claude AI Explained. How Constitutional AI Works</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">353</td><td><a href="https://www.youtube.com/watch?v=0yuQlbCkTJ0">New Research Suggests to Put AI to Sleep</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">354</td><td><a href="https://www.youtube.com/watch?v=MmP8GYOoM-k">The New Computer That Thinks Like a Brain</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">355</td><td><a href="https://www.youtube.com/watch?v=N10w1KvFKNQ">Why Everyone Is Moving Away from NVIDIA</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">356</td><td><a href="https://www.youtube.com/watch?v=oGg96zK6Lvw">What They Just Built Is Insane</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">357</td><td><a href="https://www.youtube.com/watch?v=1VX3jNJmbcI">Why the Future of Chips Is Being Built in the Desert</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">358</td><td><a href="https://www.youtube.com/watch?v=IwzguEPIddU">Inside Stanford’s New AI Chip</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">359</td><td><a href="https://www.youtube.com/watch?v=FBz0lUP-A9s">New Disruptive Microchip Technology and The Secret Plan of Intel</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">360</td><td><a href="https://www.youtube.com/watch?v=8ohh0cdgm_Y">New Photonic Chip: x1000 faster</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">361</td><td><a href="https://www.youtube.com/watch?v=Hz8yZUXsYrs">What comes after LLMs?</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">362</td><td><a href="https://www.youtube.com/watch?v=NzYpoPhckCk">Is This the Fastest AI Chip Ever?</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">363</td><td><a href="https://www.youtube.com/watch?v=n29WWr4g6sc">AI Evolution Explained: It’s All Accelerating</a></td>
+<td>Anastasi In Tech</td><td>AI</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">364</td><td><a href="https://www.youtube.com/watch?v=x21QpvUjUTQ">The Death of Computer Memory</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">365</td><td><a href="https://www.youtube.com/watch?v=2xE4bopeXhw">This Is The Future of AI</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">366</td><td><a href="https://www.youtube.com/watch?v=GDPNDOSZWQM">The Truth about China's Latest AI Chips</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">367</td><td><a href="https://www.youtube.com/watch?v=2dK3ABl-KWQ">Big News For Quantum Computing</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">368</td><td><a href="https://www.youtube.com/watch?v=zXNUBFoNPX0">Why GPUs Keep Getting Bigger</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">369</td><td><a href="https://www.youtube.com/watch?v=59rK-zsTUAk">Where's the AI Boom Going</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">370</td><td><a href="https://www.youtube.com/watch?v=wGzBuspS9JI">Microchip Breakthrough: New Era of Electronics</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">371</td><td><a href="https://www.youtube.com/watch?v=Rw1ovGfD1uI">Latest NVIDIA GPU: What's Going On?</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">372</td><td><a href="https://www.youtube.com/watch?v=SN3QWf7Cwvc">New Microchip Technology: 90% Efficiency Gains</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">373</td><td><a href="https://www.youtube.com/watch?v=TJ8vywX9asU">Meet Taichi — The Light-Speed Computer</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">374</td><td><a href="https://www.youtube.com/watch?v=ZXtBK-OsR0Q">This New Technology Will Keep Moore’s Law Going</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">375</td><td><a href="https://www.youtube.com/watch?v=l9Ic0PnJl3c">Next-Gen Computers Are Getting Really Cool</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">376</td><td><a href="https://www.youtube.com/watch?v=2wZng5fqsTo">DeepSeek: What It Means For The Future Of AI</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">377</td><td><a href="https://www.youtube.com/watch?v=L3_i-r4Clz4">A New Semiconductor That Changes Everything</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">378</td><td><a href="https://www.youtube.com/watch?v=D54gX9gTTzY">China’s Manufacturing Nightmare</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">379</td><td><a href="https://www.youtube.com/watch?v=KTyNig7enkQ">This Will Power Everything</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">380</td><td><a href="https://www.youtube.com/watch?v=HnsbSdb-9h8">Quantum Photonics Breakthrough</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">381</td><td><a href="https://www.youtube.com/watch?v=eINcrZGDQD0">When AI Meets Quantum… Everything Changes</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">382</td><td><a href="https://www.youtube.com/watch?v=MpHowo0Yvro">The Secret Behind Apple's New Silicon</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">383</td><td><a href="https://www.youtube.com/watch?v=r84Y1iXPRgk">Inside China's New AI Megafactory</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">384</td><td><a href="https://www.youtube.com/watch?v=7WuLHM8d-ew">NVIDIA’s New Photonic Technology Explained</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">385</td><td><a href="https://www.youtube.com/watch?v=eOjmTExBWPE">Why the Future Is Glass</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">386</td><td><a href="https://www.youtube.com/watch?v=Irmrp-A-W0I">The Secret Plan of IBM</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">387</td><td><a href="https://www.youtube.com/watch?v=R539FPNAwes">This New Technology Could Kill TSMC and ASML</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">388</td><td><a href="https://www.youtube.com/watch?v=9XK-fBkWsvs">World’s First Silicon-Free Processor</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">389</td><td><a href="https://www.youtube.com/watch?v=NuJGgmhKqyQ">World's Largest AI Data Center - $100B Disaster</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">390</td><td><a href="https://www.youtube.com/watch?v=IS5FovPfvf0">What They Just Built Is Unreal</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">391</td><td><a href="https://www.youtube.com/watch?v=36W0dMwQJxU">America’s New Chip Factory — $50B Disaster</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">392</td><td><a href="https://www.youtube.com/watch?v=cUBS5WvL2kk">New Light-Based Computer Takes Over</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">393</td><td><a href="https://www.youtube.com/watch?v=8DzGp41xcYM">Huge Chip Breakthrough — and a Big Warning for All</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">394</td><td><a href="https://www.youtube.com/watch?v=RxuSvyOwVCI">New Colossus: World's Largest AI Data Center Isn’t What It Seems</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">395</td><td><a href="https://www.youtube.com/watch?v=osMooAvpSSs">The Fatal Flaw of Space Data Centers</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">396</td><td><a href="https://www.youtube.com/watch?v=w6RztFN36Vo">This Forgotten Idea Is Taking Over Computing</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">397</td><td><a href="https://www.youtube.com/watch?v=E1theCfcFsA">I Met Protoclone. It’s Actually Insane</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">398</td><td><a href="https://www.youtube.com/watch?v=kucIgsS6wrw">AI Has Never Been Able To Do It - Until Now</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">399</td><td><a href="https://www.youtube.com/watch?v=b_PS8o8pi9A">Why Light Will Change Computers Forever</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">400</td><td><a href="https://www.youtube.com/watch?v=DXgZ3X8z7eE">World‘s First 0.2nm Technology</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">401</td><td><a href="https://www.youtube.com/watch?v=2Exyzeg5xGQ">Microchip Breakthrough No One Expected</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">402</td><td><a href="https://www.youtube.com/watch?v=KghkI5Oh_lY">The RAM War — And the Winners No One Expected</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">403</td><td><a href="https://www.youtube.com/watch?v=SpSq39DDHyE">The End Of Computing As We Know It</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>9.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">404</td><td><a href="https://www.youtube.com/watch?v=_ja5Z3IHXu8">Japan’s New Chip Breakthrough</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+<tr><td style="color:var(--dim)">405</td><td><a href="https://www.youtube.com/watch?v=yJSrX1uOjxs">Here’s What Comes After Silicon</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Advanced</td></tr>
+<tr><td style="color:var(--dim)">406</td><td><a href="https://www.youtube.com/watch?v=3aewaff1494">The World's First Ternary Computer</a></td>
+<td>Anastasi In Tech</td><td>Technology</td><td style="color:var(--green)"><b>8.0</b></td><td>Intermediate</td></tr>
+</table></div>
+
+<div class="footer">
+Scraper v1.0 &mdash; Copyright (c) 2024-2025 TL. All rights reserved.<br>
+Generated 2026-04-14 00:18 &nbsp;|&nbsp; 406 videos &nbsp;|&nbsp; 3 channels &nbsp;|&nbsp; 2078 facts &nbsp;|&nbsp; 744 entities
+</div></div></body></html>
