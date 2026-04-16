@@ -231,3 +231,105 @@ Hier geht es nicht um einzelne Videos, sondern um die YouTuber selbst. Das Syste
 | **Total** | **~$0.008** | **~$0.80** | **~$2.40** |
 
 **Insights tab: ~$0.003 per generation (one-time, not per video). Shorts with no transcript still cost the Apify scrape but skip the Claude call.**
+
+
+
+
+Hier ist die Erklärung genau in deinem gewünschten Format: simpel, auf den Punkt, aber immer mit dem passenden Code-Schnipsel als Beweis, *warum* die App das genau so macht.
+
+---
+
+### 1. SCORING: WHO GIVES THE POINTS?
+
+Keine Mathe in der App. Der Score (1-10) kommt 100% von Claude (der KI).
+
+**Warum bewertet Claude überhaupt nach "Relevanz" und filtert Werbung raus?** Weil die App ihm im Hintergrund eine ganz klare Rolle aufzwingt:
+
+> `ANALYSIS_SYSTEM = """You are a knowledge base builder for YouTube business intelligence. Extract ALL useful information into structured JSON... Ignore ads/sponsorships."""`
+> 
+
+**Warum gibt es genau eine Note von 1 bis 10 und z.B. eine "Core Idea"?**
+
+Weil Claude im Prompt strikt gezwungen wird, eine vorgefertigte Text-Schablone auszufüllen. Wenn du *Extra Instructions* (z.B. Fokus auf Geld) eingibst, fließen die hier mit rein:
+
+> `Return ONLY this JSON: { ... "score":<1-10>, "core_idea":"<1-2 sentences>", "insight":"<1 concrete lesson>" ... }`
+> 
+
+Die App nimmt danach diesen Score nur noch zum Sortieren. Fertig.
+
+---
+
+### 2. CORE FUNCTIONS: WHAT HAPPENS WHERE?
+
+Der schnelle Weg vom Link zur Tabelle.
+
+### A. SCRAPING
+
+- **`apify_scrape()`:** Zieht Daten mit Apify. YouTube blockt uns sonst.
+    
+    *Warum klappt das ohne dass die App es blokiert?* Weil der Code Apify anweist, die eigenen Proxyserver zu nutzen, um unsichtbar zu bleiben:
+    
+    > `"proxy": {"useApifyProxy": True}`
+    > 
+- **`get_transcript_text()`:** Macht sauber. Nur der pure Text bleibt.
+    
+    *Wie macht er das?* Er sucht in dem riesigen Daten-Chaos von Apify gezielt nur nach dem Feld, das den reinen Text enthält:
+    
+    > `pt = first.get("plaintext") or first.get("plain_text") or ""`
+    > 
+- **`chunk_transcript()`:** Schneidet Text in kleine Stücke. Besser für die späteren Suchen.
+    
+    *Warum nicht alles am Stück?* Weil riesige Texte schwer zu verarbeiten sind. Die App hat ein festes Limit eingebaut:
+    
+    > `CHUNK_SIZE = 1500   # Chars per trans`
+    > 
+
+### B. PROCESSING
+
+- **`process_video()`:** Koordiniert alles. Fragt Scraper, schickt Text an Claude, speichert Ergebnisse in der Datenbank.
+- **`safe_parse_json()`:** Der Lebensretter. Claude baut manchmal kaputtes JSON (vergisst Kommas). Funktion repariert das.
+    
+    *Warum ist das nötig?* KIs machen manchmal Formatierungsfehler. Die App hat dafür harte "Notfallpläne" eingebaut, damit sie trotzdem nicht abstürzt. Wenn das JSON komplett hin ist, greift Plan B (Regex-Gewalt):
+    
+    > `# Step 5: Aggressive repair - rebuild key by key`
+    > 
+    > 
+    > `# Step 6: Last resort - extract fields with regex`
+    > 
+
+### C. DATABASE (THE MEMORY)
+
+- **`history_mark()` / `history_check()`:** Wie eine Checkliste. Video schon gemacht? Dann Skip. Spart Zeit und API-Kosten.
+    
+    *Wo passiert das?* Direkt am Anfang der Verarbeitung fragt der Code die Datenbank ab und bricht ab, wenn das Video bekannt ist:
+    
+    > `status = history_check(vid_id)`
+    > 
+    > 
+    > `if status == "done":`
+    > 
+    > `log("  Skip (already in history)")`
+    > 
+    > `return False`
+    > 
+
+### D. DASHBOARDS & INSIGHTS (THE VISUALS)
+
+- **`generate_dashboard()`:** Holt simple Stats aus der Datenbank. Baut direkt HTML Graphen.
+- **`call_claude()`:** (Insights-Tab). Wir geben Claude unsere besten Clips. Er sagt uns die Trends und Content-Lücken.
+    
+    *Warum antwortet Claude hier so strategisch und genau in 4 Punkten?* Weil es exakt so in seinem System-Auftrag steht:
+    
+    > `RECOMMEND_SYSTEM = """You are a BI advisor. Given YouTube data, suggest trends and gaps. Concise. English. Max 300 words."""`
+    > 
+    > 
+    > *Prompt Vorgabe an die KI:*
+    > 
+    > `1. Top 3 content gaps`
+    > 
+    > `2. Top 3 trending tech`
+    > 
+    > `3. Top 3 channels`
+    > 
+    > `4. One surprise`
+    >
